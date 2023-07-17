@@ -1,0 +1,37 @@
+body {
+    color: white;
+    background-color: #3d3d3d;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#yomogi {
+    font-family: "Yomogi";
+}
+
+.asteroid {
+    width: 80px;
+    height: 76px;
+    position: absolute;
+    filter: invert(100%);
+    left: 38%;
+    top: 4%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.nameimage h1 {
+    text-align: center;
+}
+
+
+
+
+
+
+footer .footerhr {
+    width: 75%;
+}
+
+footer p {
+    text-align: center;
+}
