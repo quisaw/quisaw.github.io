@@ -219,9 +219,35 @@
   <script>
     // ── theme toggle ──
     document.getElementById('avatar').addEventListener('click', () => {
-      document.body.classList.toggle('dark');
-      document.body.classList.toggle('light');
+    document.body.classList.toggle('dark');
+    document.body.classList.toggle('light');
+    meow(); // ← add this line
     });
+
+    // ── meow sound ──
+    function meow() {
+        const ac = new AudioContext();
+        const o = ac.createOscillator();
+        const g = ac.createGain();
+        o.connect(g);
+        g.connect(ac.destination);
+
+        // meow shape: quick rise then falling tone
+        o.type = 'sine';
+        const t = ac.currentTime;
+        o.frequency.setValueAtTime(520, t);
+        o.frequency.linearRampToValueAtTime(780, t + 0.08);
+        o.frequency.exponentialRampToValueAtTime(420, t + 0.35);
+        o.frequency.exponentialRampToValueAtTime(300, t + 0.5);
+
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.18, t + 0.04);
+        g.gain.linearRampToValueAtTime(0.12, t + 0.3);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.52);
+
+        o.start(t);
+        o.stop(t + 0.55);
+    }
 
     // ── paw particle system ──
     const canvas = document.getElementById('paws-canvas');
