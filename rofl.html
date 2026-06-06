@@ -1,16 +1,310 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rofl fag</title>
-    <style>
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>rofl whiskr</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      transition: background 0.5s;
+      overflow: hidden;
+    }
+
+    /* ── DARK (default) ── */
+    body.dark { background: #1e1e1e; }
+    body.dark .card { background: #2a2a2a; border-color: rgba(255,255,255,0.1); }
+    body.dark .name { color: #f0f0f0; }
+    body.dark .bio { color: #999; }
+    body.dark .bio strong { color: #f0f0f0; }
+    body.dark .divider { border-color: rgba(255,255,255,0.08); }
+    body.dark .link-btn { background: #333; border-color: rgba(255,255,255,0.1); color: #eee; }
+    body.dark .link-btn:hover { background: #3a3a3a; border-color: rgba(255,255,255,0.2); }
+    body.dark .link-icon { color: #aaa; }
+    body.dark .link-label { color: #666; }
+    body.dark .badge-gay    { background: #3a1525; color: #e88aaa; border-color: #6a2540; }
+    body.dark .badge-pr     { background: #1a1535; color: #a899f0; border-color: #3d348a; }
+    body.dark .badge-furry  { background: #0d2820; color: #5fd4a8; border-color: #1a5e42; }
+    body.dark .avatar { background: #2c2550; border-color: #6a60c0; }
+
+    /* ── LIGHT ── */
+    body.light { background: #f5f4f0; }
+    body.light .card { background: #fff; border-color: rgba(0,0,0,0.12); }
+    body.light .name { color: #1a1a1a; }
+    body.light .bio { color: #666; }
+    body.light .bio strong { color: #1a1a1a; }
+    body.light .divider { border-color: rgba(0,0,0,0.1); }
+    body.light .link-btn { background: #f9f8f5; border-color: rgba(0,0,0,0.12); color: #1a1a1a; }
+    body.light .link-btn:hover { background: #fff; border-color: rgba(0,0,0,0.25); }
+    body.light .link-icon { color: #888; }
+    body.light .link-label { color: #aaa; }
+    body.light .badge-gay    { background: #FBEAF0; color: #993556; border: 0.5px solid #F4C0D1; }
+    body.light .badge-pr     { background: #EEEDFE; color: #534AB7; border: 0.5px solid #CECBF6; }
+    body.light .badge-furry  { background: #E1F5EE; color: #0F6E56; border: 0.5px solid #9FE1CB; }
+    body.light .avatar { background: #EEEDFE; border-color: #AFA9EC; }
+
+    /* ── canvas ── */
+    #paws-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── card ── */
+    .card {
+      border: 0.5px solid;
+      border-radius: 20px;
+      padding: 2.5rem 2rem 2rem;
+      max-width: 380px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      transition: background 0.5s, border-color 0.5s;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #D4537E, #7F77DD, #1D9E75, #D85A30);
+    }
+
+    .avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2px solid;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 1.25rem;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.5s, border-color 0.5s;
+      user-select: none;
+    }
+    .avatar:hover { transform: scale(1.1); }
+    .avatar:active { transform: scale(0.95); }
+
+    .name {
+      font-size: 22px;
+      font-weight: 800;
+      text-align: center;
+      margin: 0 0 12px;
+      letter-spacing: -0.5px;
+      transition: color 0.5s;
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 0 0 1.5rem;
+    }
+
+    .badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      transition: background 0.5s, color 0.5s, border-color 0.5s;
+    }
+
+    .divider {
+      border: none;
+      border-top: 0.5px solid;
+      margin: 0 0 1.25rem;
+      transition: border-color 0.5s;
+    }
+
+    .bio {
+      font-size: 14px;
+      text-align: center;
+      margin: 0 0 1.5rem;
+      line-height: 1.6;
+      font-family: 'Space Mono', monospace;
+      transition: color 0.5s;
+    }
+
+    .links { display: flex; flex-direction: column; gap: 10px; }
+
+    .link-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 0.5px solid;
+      text-decoration: none;
+      font-size: 13px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 500;
+      transition: border-color 0.15s, background 0.15s, color 0.5s;
+    }
+
+    .link-icon { font-size: 18px; transition: color 0.5s; }
+    .link-label { font-size: 11px; font-family: 'Space Mono', monospace; margin-left: auto; transition: color 0.5s; }
+
+    .theme-hint {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: rgba(255,255,255,0.2);
+      z-index: 2;
+      pointer-events: none;
+      transition: color 0.5s;
+      white-space: nowrap;
+    }
+    body.light .theme-hint { color: rgba(0,0,0,0.18); }
+  </style>
 </head>
-<body>
-<pre>hi im rofl whiskr meow meow, i'm very gay and pr bro 2 months
-i love paws and hot gay furries
-t.me/overpawed
-@uncwhiskr on discord</pre>
+<body class="dark">
+  <canvas id="paws-canvas"></canvas>
+
+  <div class="card">
+    <div class="avatar" id="avatar" title="click to toggle theme">🐱</div>
+    <p class="name">rofl whiskr</p>
+    <div class="badge-row">
+      <span class="badge badge-gay">very gay</span>
+      <span class="badge badge-pr">PR · 2mo</span>
+      <span class="badge badge-furry">furry</span>
+    </div>
+    <hr class="divider">
+    <p class="bio">meow meow 🐾<br><strong>lover of paws</strong> &amp; hot gay furries</p>
+    <div class="links">
+      <a class="link-btn" href="https://t.me/overpawed">
+        <i class="ti ti-brand-telegram link-icon" aria-hidden="true"></i>
+        t.me/overpawed
+        <span class="link-label">Telegram</span>
+      </a>
+      <a class="link-btn" href="#">
+        <i class="ti ti-brand-discord link-icon" aria-hidden="true"></i>
+        @uncwhiskr
+        <span class="link-label">Discord</span>
+      </a>
+    </div>
+  </div>
+
+  <p class="theme-hint">click 🐱 to toggle theme</p>
+
+  <script>
+    // ── theme toggle ──
+    document.getElementById('avatar').addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      document.body.classList.toggle('light');
+    });
+
+    // ── paw particle system ──
+    const canvas = document.getElementById('paws-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+    const PAW = '🐾';
+    const COUNT = 38;
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function rand(a, b) { return a + Math.random() * (b - a); }
+
+    function makeParticle() {
+      return {
+        x: rand(0, W),
+        y: rand(-60, H + 60),
+        size: rand(10, 30),
+        // slow drift like ash: mostly upward with tiny wobble
+        vx: rand(-0.25, 0.25),
+        vy: rand(-0.6, -0.12),
+        // slight horizontal sway oscillation
+        sway: rand(0, Math.PI * 2),
+        swaySpeed: rand(0.004, 0.014),
+        swayAmp: rand(0.2, 0.7),
+        alpha: rand(0.08, 0.55),
+        // hue shift: start at random point in rainbow
+        hue: rand(0, 360),
+        hueSpeed: rand(0.4, 1.2),
+        rot: rand(0, Math.PI * 2),
+        rotSpeed: rand(-0.01, 0.01),
+      };
+    }
+
+    for (let i = 0; i < COUNT; i++) {
+      const p = makeParticle();
+      // scatter vertically so they don't all start at top
+      p.y = rand(0, H);
+      particles.push(p);
+    }
+
+    function hsl(h, s, l, a) {
+      return `hsla(${h % 360},${s}%,${l}%,${a})`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      for (const p of particles) {
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        // rainbow color filter via shadow glow trick
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = hsl(p.hue, 100, 60, 0.9);
+        // draw emoji
+        ctx.font = `${p.size}px serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        // tint via composite — draw colored rect over emoji
+        ctx.fillText(PAW, 0, 0);
+        // overlay a hue-tinted layer using source-atop
+        ctx.globalCompositeOperation = 'source-atop';
+        ctx.globalAlpha = 0.55;
+        ctx.fillStyle = hsl(p.hue, 100, 65, 1);
+        ctx.fillRect(-p.size, -p.size, p.size * 2, p.size * 2);
+        ctx.restore();
+
+        // update
+        p.sway += p.swaySpeed;
+        p.x += p.vx + Math.sin(p.sway) * p.swayAmp;
+        p.y += p.vy;
+        p.rot += p.rotSpeed;
+        p.hue += p.hueSpeed;
+
+        // reset when drifted off top (or sides)
+        if (p.y < -p.size * 2 || p.x < -60 || p.x > W + 60) {
+          Object.assign(p, makeParticle());
+          p.y = H + p.size;
+          p.x = rand(0, W);
+        }
+      }
+
+      requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
 </body>
 </html>
