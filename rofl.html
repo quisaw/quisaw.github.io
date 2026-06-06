@@ -187,7 +187,7 @@
     body.light .theme-hint { color: rgba(0,0,0,0.18); }
   </style>
 </head>
-<body class="dark">
+<body>
   <canvas id="paws-canvas"></canvas>
 
   <div class="card">
@@ -217,11 +217,31 @@
   <p class="theme-hint">click 🐱 to toggle theme</p>
 
   <script>
+    // ── auto-detect system theme ──
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.body.classList.add(prefersDark ? 'dark' : 'light');
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        document.body.classList.remove('dark', 'light');
+        document.body.classList.add(e.matches ? 'dark' : 'light');
+    });
+
+    // purr on load
+    window.addEventListener('load', () => {
+        purr();
+
+        // random chase: happens between 3 and 10 seconds after load, ~60% of the time
+        if (Math.random() < 0.6) {
+            const delay = 3000 + Math.random() * 7000;
+            setTimeout(catChasesFish, delay);
+        }
+    });
+
     // ── theme toggle ──
     document.getElementById('avatar').addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    document.body.classList.toggle('light');
-    meow(); // ← add this line
+        document.body.classList.toggle('dark');
+        document.body.classList.toggle('light');
+        meow(); // ← add this line
     });
 
     // ── meow sound ──
@@ -247,6 +267,117 @@
 
         o.start(t);
         o.stop(t + 0.55);
+    }
+
+    function purr() {
+        const ac = new AudioContext();
+        const o = ac.createOscillator();
+        const g = ac.createGain();
+        const lfo = ac.createOscillator();
+        const lfoGain = ac.createGain();
+
+        lfo.frequency.value = 25; // purr rumble rate
+        lfoGain.gain.value = 18;
+        lfo.connect(lfoGain);
+        lfoGain.connect(o.frequency);
+
+        o.type = 'sawtooth';
+        o.frequency.value = 55;
+        o.connect(g);
+        g.connect(ac.destination);
+
+        const t = ac.currentTime;
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(0.07, t + 0.3);
+        g.gain.setValueAtTime(0.07, t + 1.8);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 2.4);
+
+        lfo.start(t);
+        o.start(t);
+        lfo.stop(t + 2.4);
+        o.stop(t + 2.4);
+    }
+
+    function catChasesFish() {
+        const scene = document.createElement('div');
+        scene.style.cssText = `
+        position:fixed; bottom:0; left:0; width:100%; height:80px;
+        pointer-events:none; z-index:999; overflow:hidden;
+    `;
+
+  const fish = document.createElement('div');
+  fish.textContent = '🐟';
+  fish.style.cssText = `
+    position:absolute; bottom:18px; font-size:28px;
+    left:100%; transition:none; filter:drop-shadow(0 0 6px rgba(80,200,255,0.7));
+  `;
+
+  const cat = document.createElement('div');
+  cat.textContent = '🐱';
+  cat.style.cssText = `
+    position:absolute; bottom:14px; font-size:34px;
+    left:100%; transition:none;
+  `;
+
+  scene.appendChild(fish);
+  scene.appendChild(cat);
+  document.body.appendChild(scene);
+
+  let fishX = window.innerWidth + 40;
+  let catX  = window.innerWidth + 140;
+  const fishSpeed = 3.2;
+  const catSpeed  = 2.6; // starts slower, speeds up
+  let caught = false;
+  let frame = 0;
+  let catchFrame = null;
+
+  function animate() {
+    frame++;
+    fishX -= fishSpeed;
+
+    // cat accelerates over time, simulating a chase
+    const boost = Math.min(frame * 0.008, 1.5);
+    catX -= catSpeed + boost;
+
+    // wobble the cat vertically like it's running
+    const bounce = Math.sin(frame * 0.35) * 5;
+    cat.style.bottom = (14 + bounce) + 'px';
+
+    fish.style.left = fishX + 'px';
+    cat.style.left  = catX  + 'px';
+
+    // catch: when cat gets close enough
+    if (!caught && catX - fishX < 20) {
+      caught = true;
+      catchFrame = frame;
+      fish.textContent = '💨'; // fish vanishes in a puff
+      cat.textContent  = '😸'; // cat looks satisfied
+      setTimeout(() => { fish.textContent = ''; }, 300);
+    }
+
+    // after catch, cat slows to a stop then scene fades
+    if (caught) {
+      catX -= Math.max(catSpeed + 1.5 - (frame - catchFrame) * 0.15, 0);
+      if (frame - catchFrame > 80) {
+        scene.style.transition = 'opacity 0.8s';
+        scene.style.opacity = '0';
+        setTimeout(() => scene.remove(), 900);
+        return;
+      }
+    }
+
+    // if fish exits left without being caught, clean up
+    if (fishX < -60 && !caught) {
+      scene.style.transition = 'opacity 0.6s';
+      scene.style.opacity = '0';
+      setTimeout(() => scene.remove(), 700);
+      return;
+    }
+
+        requestAnimationFrame(animate);
+    }
+
+        requestAnimationFrame(animate);
     }
 
     // ── paw particle system ──
